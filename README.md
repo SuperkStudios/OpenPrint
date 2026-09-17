@@ -1,4 +1,4 @@
-# SuperPrint OS
+# OpenPrint
 
 > Observable manufacturing infrastructure for the next generation of fabrication.
 
