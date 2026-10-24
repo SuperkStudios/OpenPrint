@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MAX_SUPPORTED_MATERIALS } from "./input-limits";
 
 export const filamentMaterials = ["PLA", "PETG", "ABS", "TPU", "NYLON", "RESIN"] as const;
 const filamentMaterialSet = new Set<string>(filamentMaterials);
@@ -14,6 +15,7 @@ export const printerProfileSchema = z.object({
   supportedMaterials: z
     .array(z.string())
     .min(1)
+    .max(MAX_SUPPORTED_MATERIALS)
     .superRefine((materials, context) => {
       for (const [index, material] of materials.entries()) {
         if (!filamentMaterialSet.has(material)) {
