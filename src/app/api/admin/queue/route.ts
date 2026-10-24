@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { MAX_QUEUE_ITEMS } from "@/domain/input-limits";
 import { requireAdmin } from "@/lib/http";
 import {
   completePrintJob,
@@ -16,7 +17,7 @@ import {
 const actionSchema = z.object({
   action: z.enum(["reorder", "optimizeMaterials", "approvePhysicalStart", "pause", "complete", "stop", "fail", "requeue"]),
   printJobId: z.string().optional(),
-  orderedIds: z.array(z.string()).optional(),
+  orderedIds: z.array(z.string()).max(MAX_QUEUE_ITEMS).optional(),
   checklist: z
     .object({
       correctFilamentLoaded: z.boolean(),

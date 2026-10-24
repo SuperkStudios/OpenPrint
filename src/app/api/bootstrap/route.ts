@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { MAX_BOOTSTRAP_FILAMENTS, MAX_HISTORY_ITEMS } from "@/domain/input-limits";
 import { runOwnerBootstrap } from "@/lib/bootstrap";
 
 const filamentSchema = z.object({
@@ -19,6 +20,7 @@ const filamentSchema = z.object({
         completedAt: z.string().optional()
       })
     )
+    .max(MAX_HISTORY_ITEMS)
     .optional(),
   ignoredPrinterHistory: z
     .array(
@@ -29,10 +31,34 @@ const filamentSchema = z.object({
         completedAt: z.string().optional()
       })
     )
+    .max(MAX_HISTORY_ITEMS)
     .optional()
 });
 
-const schema = z.object({
+// Setup repeats ignored history per spool and accepts both filament aliases.
+// Bound their combined work before Zod can accumulate nested element errors.
+const schema = z.preprocess((input, context) => {
+  if (!input || typeof input !== "object") return input;
+  const body = input as Record<string, unknown>;
+  const filaments = Array.isArray(body.filaments) ? body.filaments : [];
+  if (filaments.length > MAX_BOOTSTRAP_FILAMENTS) {
+    context.addIssue({ code: "custom", path: ["filaments"], message: `At most ${MAX_BOOTSTRAP_FILAMENTS} filaments are allowed` });
+    return z.NEVER;
+  }
+  let historyItems = 0;
+  for (const filament of [body.filament, ...filaments]) {
+    if (!filament || typeof filament !== "object") continue;
+    const spool = filament as Record<string, unknown>;
+    for (const key of ["assignedPrinterHistory", "ignoredPrinterHistory"]) {
+      if (Array.isArray(spool[key])) historyItems += spool[key].length;
+      if (historyItems > MAX_HISTORY_ITEMS) {
+        context.addIssue({ code: "custom", message: `At most ${MAX_HISTORY_ITEMS} total bootstrap history items are allowed` });
+        return z.NEVER;
+      }
+    }
+  }
+  return input;
+}, z.object({
   owner: z.object({
     name: z.string().min(1),
     email: z.string().email(),
@@ -50,12 +76,12 @@ const schema = z.object({
     controlApiUrl: z.string().url()
   }),
   filament: filamentSchema,
-  filaments: z.array(filamentSchema).min(1).optional(),
+  filaments: z.array(filamentSchema).min(1).max(MAX_BOOTSTRAP_FILAMENTS).optional(),
   security: z.object({
     mediaTokenSecretSet: z.boolean(),
     backupPassphraseSet: z.boolean()
   }).optional()
-});
+}));
 
 export async function POST(request: Request) {
   try {

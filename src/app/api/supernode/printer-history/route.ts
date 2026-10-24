@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { MAX_HISTORY_ITEMS } from "@/domain/input-limits";
 import type { CompletedPrinterHistoryItem } from "@/domain/filament-usage";
 import { prisma } from "@/lib/prisma";
 import { syncManualPrintEventsFromHistory } from "@/services/printer-heartbeat";
@@ -23,7 +24,7 @@ const historyItemSchema = z.object({
 const schema = z.object({
   nodeId: z.string().min(1),
   printerId: z.string().optional().nullable(),
-  completedPrints: z.array(historyItemSchema).default([])
+  completedPrints: z.array(historyItemSchema).max(MAX_HISTORY_ITEMS).default([])
 });
 
 export async function POST(request: Request) {
