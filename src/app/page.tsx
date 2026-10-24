@@ -10,7 +10,7 @@ import {
   ChevronRight,
   CircleDot,
   Cpu,
-  Github,
+  Code2,
   Layers3,
   Play,
   Radio,
@@ -78,7 +78,7 @@ export default function HomePage() {
             <Link className="transition hover:text-white" href="#connectivity">Connectivity</Link>
             <a
               className="transition hover:text-white"
-              href="https://github.com/SuperkStudios/PrintNow"
+              href="https://github.com/SuperkStudios/OpenPrint"
               target="_blank"
               rel="noreferrer"
             >
@@ -271,7 +271,7 @@ export default function HomePage() {
           <div className="mt-5 flex flex-col items-start justify-between gap-6 rounded-2xl border border-white/10 bg-white/[0.035] p-6 sm:p-8 lg:flex-row lg:items-center">
             <div className="flex max-w-3xl items-start gap-4">
               <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-orange-400/10 text-orange-300">
-                <Github className="size-5" />
+                <Code2 className="size-5" />
               </span>
               <div>
                 <h2 className="text-xl font-semibold text-white">Built in public, made to run locally.</h2>
@@ -281,7 +281,7 @@ export default function HomePage() {
               </div>
             </div>
             <a
-              href="https://github.com/SuperkStudios/PrintNow"
+              href="https://github.com/SuperkStudios/OpenPrint"
               target="_blank"
               rel="noreferrer"
               className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-white/15 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
@@ -298,7 +298,7 @@ export default function HomePage() {
           <p>SuperPrint OS · Observable manufacturing infrastructure</p>
           <div className="flex items-center gap-5">
             <Link className="transition hover:text-slate-200" href="/operator">Operator console</Link>
-            <a className="transition hover:text-slate-200" href="https://github.com/SuperkStudios/PrintNow" target="_blank" rel="noreferrer">
+            <a className="transition hover:text-slate-200" href="https://github.com/SuperkStudios/OpenPrint" target="_blank" rel="noreferrer">
               GitHub
             </a>
           </div>
